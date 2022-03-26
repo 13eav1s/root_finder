@@ -6,22 +6,22 @@
 """
 Необходимо вычислить корни функции на отрезке [a; b] заданным методом. Для вычисления отрезок [a; b] делится на
 элементарные отрезки с шагом h. На каждом элементарном отрезке у функции не более одного корня. Для каждого
-элементарного отрезка, на котором есть корень, итерационно вычисляется приближенное значение корня с заданной точностью
-eps. Для обнаружения медленного процесса сходимости или расходимости метода количество итераций ограничивается числом
+элементарного отрезка, на котором есть корень, итерационно вычисляется приближенное значение корня с заданной точностью
+eps. Для обнаружения медленного процесса сходимости или расходимости метода количество итераций ограничивается числом
 Nmax.
 Исходные данные: функция в аналитическом виде, начало и конец отрезка a, b, шаг деления отрезка h, максимальное
-количество итераций Nmax, точность eps.
+количество итераций Nmax, точность eps.
 Получаемые значения:
-[xi; xi+1] – элементарный отрезок, на котором производится вычисление корня функции
+[xi; xi+1] – элементарный отрезок, на котором производится вычисление корня функции
 заданным методом,
 x’ – приближенное значение корня,
-f(x’) – значение функции в точке корня (данная величина является вещественным числом в нормальной форме, вводится с
+f(x’) – значение функции в точке корня (данная величина является вещественным числом в нормальной форме, вводится с
 одним значащим разрядом в мантиссе),
 Код ошибки – числовое значение, отражающее причину невозможности определения приближенного значения корня функции на
 данном интервале заданным методом.
 2) график функции на отрезке [a; b], на котором отмечаются корни, экстремумы и точки перегиба функции. Для построения
 графика используется библиотека matplotlib.
-Вариант 6 метод: комбинированный;
+Вариант 6 метод: комбинированный;
 """
 
 from PyQt6 import QtWidgets, QtCore, QtGui
@@ -275,7 +275,7 @@ def get_all(func, a, b, h, Nmax, eps, tab):
         #  разделяем заданный интервал на отрезки длины h
     c = a
     d = c + h
-    while d < b:
+    while d <= b + h:
         x0 = c
         x1 = d
         #  проверка на существования корня на заданном отрезке
@@ -307,6 +307,69 @@ def get_all(func, a, b, h, Nmax, eps, tab):
 
                 if abs(x1 - x0) <= 2 * eps:
                     break
+
+                if iter_num >= Nmax:
+                    item = QtWidgets.QTableWidgetItem()
+                    tab.setItem(N, 2, item)
+                    item = tab.item(N, 2)
+                    item_text = str(round((x1 + x0) / 2, 2))
+                    item.setText(item_text)
+
+                    item = QtWidgets.QTableWidgetItem()
+                    tab.setItem(N, 3, item)
+                    item = tab.item(N, 3)
+                    item_text = str(round(f((x1 + x0) / 2, func), 2))
+                    item.setText(item_text)
+
+                    item = QtWidgets.QTableWidgetItem()
+                    tab.setItem(N, 4, item)
+                    item = tab.item(N, 4)
+                    item_text = str(iter_num)
+                    item.setText(item_text)
+
+                    item = QtWidgets.QTableWidgetItem()
+                    tab.setItem(N, 5, item)
+                    item = tab.item(N, 5)
+                    item_text = "1"
+                    item.setText(item_text)
+
+                    item = QtWidgets.QTableWidgetItem()
+                    tab.setItem(N, 0, item)
+                    item = tab.item(N, 0)
+                    item.setText(str(solve_index + 1))
+                    break
+
+
+
+            if (x1 + x0) / 2 > b:
+                item = QtWidgets.QTableWidgetItem()
+                tab.setItem(N, 2, item)
+                item = tab.item(N, 2)
+                item_text = "-"
+                item.setText(item_text)
+
+                item = QtWidgets.QTableWidgetItem()
+                tab.setItem(N, 0, item)
+                item = tab.item(N, 0)
+                item.setText(item_text)
+
+                item = QtWidgets.QTableWidgetItem()
+                tab.setItem(N, 3, item)
+                item = tab.item(N, 3)
+                item.setText(item_text)
+
+                item = QtWidgets.QTableWidgetItem()
+                tab.setItem(N, 4, item)
+                item = tab.item(N, 4)
+                item.setText(item_text)
+
+                item = QtWidgets.QTableWidgetItem()
+                tab.setItem(N, 5, item)
+                item = tab.item(N, 5)
+                item.setText(item_text)
+                return 0
+
+
             item = QtWidgets.QTableWidgetItem()
             tab.setItem(N, 2, item)
             item = tab.item(N, 2)
@@ -328,10 +391,12 @@ def get_all(func, a, b, h, Nmax, eps, tab):
             item = QtWidgets.QTableWidgetItem()
             tab.setItem(N, 5, item)
             item = tab.item(N, 5)
-            if iter_num <= Nmax:
-                item_text = "0"
-            else:
+            if abs(x0 + x1)/2 > d:
+                item_text = "2"
+            elif iter_num >= Nmax:
                 item_text = "1"
+            elif iter_num < Nmax:
+                item_text = "0"
             item.setText(item_text)
 
             item = QtWidgets.QTableWidgetItem()
